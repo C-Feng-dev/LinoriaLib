@@ -16,6 +16,7 @@ ProtectGui(ScreenGui);
 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
 ScreenGui.Parent = CoreGui;
+ScreenGui.Name = "LinoriaLib-UI";
 
 local Toggles = {};
 local Options = {};
