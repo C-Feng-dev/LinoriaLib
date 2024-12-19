@@ -2687,6 +2687,7 @@ do
         Size = UDim2.new(0, 300, 0, 200);
         ZIndex = 100;
         Parent = ScreenGui;
+        Name = "NotificationArea";
     });
 
     Library:Create('UIListLayout', {
@@ -2842,7 +2843,7 @@ function Library:SetWatermark(Text)
     Library.WatermarkText.Text = Text;
 end;
 
-function Library:Notify(Text, Time)
+function Library:Notify(Text, Time, enablesound, sound)
     local XSize, YSize = Library:GetTextBounds(Text, Library.Font, 14);
 
     YSize = YSize + 7
@@ -2854,6 +2855,7 @@ function Library:Notify(Text, Time)
         ClipsDescendants = true;
         ZIndex = 100;
         Parent = Library.NotificationArea;
+        Name = "Notify";
     });
 
     local NotifyInner = Library:Create('Frame', {
@@ -2863,6 +2865,13 @@ function Library:Notify(Text, Time)
         Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 101;
         Parent = NotifyOuter;
+    });
+
+    local NotifySound = Library:Create('Sound',{
+        Volume = 3;
+        SoundId = sound or "rbxassetid://4590662766";
+        Playing = enablesound or true;           
+        Parent = NotifyOuter  
     });
 
     Library:AddToRegistry(NotifyInner, {
