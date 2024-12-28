@@ -80,7 +80,7 @@ local SaveManager = {} do
 
 	function SaveManager:Save(name)
 		if (not name) then
-			return false, 'no config file is selected'
+			return false, '未选择任何配置文件'
 		end
 
 		local fullPath = self.Folder .. '/settings/' .. name .. '.json'
@@ -104,7 +104,7 @@ local SaveManager = {} do
 
 		local success, encoded = pcall(httpService.JSONEncode, httpService, data)
 		if not success then
-			return false, 'failed to encode data'
+			return false, '编码失败'
 		end
 
 		writefile(fullPath, encoded)
@@ -113,7 +113,7 @@ local SaveManager = {} do
 
 	function SaveManager:Load(name)
 		if (not name) then
-			return false, 'no config file is selected'
+			return false, '未选择任何配置文件'
 		end
 		
 		local file = self.Folder .. '/settings/' .. name .. '.json'
@@ -190,60 +190,60 @@ local SaveManager = {} do
 
 			local success, err = self:Load(name)
 			if not success then
-				return self.Library:Notify('Failed to load autoload config: ' .. err)
+				return self.Library:Notify('自动加载配置文件失败:' .. err)
 			end
 
-			self.Library:Notify(string.format('Auto loaded config %q', name))
+			self.Library:Notify(string.format('自动加载配置文件%q', name))
 		end
 	end
 
 
 	function SaveManager:BuildConfigSection(tab)
-		assert(self.Library, 'Must set SaveManager.Library')
+		assert(self.Library, '必须设置SaveManager.Library')
 
-		local section = tab:AddRightGroupbox('Configuration')
+		local section = tab:AddRightGroupbox('配置')
 
-		section:AddInput('SaveManager_ConfigName',    { Text = 'Config name' })
-		section:AddDropdown('SaveManager_ConfigList', { Text = 'Config list', Values = self:RefreshConfigList(), AllowNull = true })
+		section:AddInput('SaveManager_ConfigName',    { Text = '配置文件名' })
+		section:AddDropdown('SaveManager_ConfigList', { Text = '配置文件列表', Values = self:RefreshConfigList(), AllowNull = true })
 
 		section:AddDivider()
 
-		section:AddButton('Create config', function()
+		section:AddButton('创建配置文件', function()
 			local name = Options.SaveManager_ConfigName.Value
 
 			if name:gsub(' ', '') == '' then 
-				return self.Library:Notify('Invalid config name (empty)', 2)
+				return self.Library:Notify('不规范的文件名(未填写)', 2)
 			end
 
 			local success, err = self:Save(name)
 			if not success then
-				return self.Library:Notify('Failed to save config: ' .. err)
+				return self.Library:Notify('保存配置文件失败:' .. err)
 			end
 
-			self.Library:Notify(string.format('Created config %q', name))
+			self.Library:Notify(string.format('成功创建配置文件%q', name))
 
 			Options.SaveManager_ConfigList:SetValues(self:RefreshConfigList())
 			Options.SaveManager_ConfigList:SetValue(nil)
-		end):AddButton('Load config', function()
+		end):AddButton('加载配置文件', function()
 			local name = Options.SaveManager_ConfigList.Value
 
 			local success, err = self:Load(name)
 			if not success then
-				return self.Library:Notify('Failed to load config: ' .. err)
+				return self.Library:Notify('加载配置文件失败:' .. err)
 			end
 
-			self.Library:Notify(string.format('Loaded config %q', name))
+			self.Library:Notify(string.format('成功加载配置文件%q', name))
 		end)
 
-		section:AddButton('Overwrite config', function()
+		section:AddButton('覆写配置文件', function()
 			local name = Options.SaveManager_ConfigList.Value
 
 			local success, err = self:Save(name)
 			if not success then
-				return self.Library:Notify('Failed to overwrite config: ' .. err)
+				return self.Library:Notify('覆写配置文件失败:' .. err)
 			end
 
-			self.Library:Notify(string.format('Overwrote config %q', name))
+			self.Library:Notify(string.format('成功覆写配置文件%q', name))
 		end)
 
 		section:AddButton('Refresh list', function()
@@ -254,15 +254,15 @@ local SaveManager = {} do
 		section:AddButton('Set as autoload', function()
 			local name = Options.SaveManager_ConfigList.Value
 			writefile(self.Folder .. '/settings/autoload.txt', name)
-			SaveManager.AutoloadLabel:SetText('Current autoload config: ' .. name)
-			self.Library:Notify(string.format('Set %q to auto load', name))
+			SaveManager.AutoloadLabel:SetText('当前自动加载的配置文件:' .. name)
+			self.Library:Notify(string.format('将%q设置为自动加载的配置文件', name))
 		end)
 
-		SaveManager.AutoloadLabel = section:AddLabel('Current autoload config: none', true)
+		SaveManager.AutoloadLabel = section:AddLabel('当前自动加载的配置文件:无', true)
 
 		if isfile(self.Folder .. '/settings/autoload.txt') then
 			local name = readfile(self.Folder .. '/settings/autoload.txt')
-			SaveManager.AutoloadLabel:SetText('Current autoload config: ' .. name)
+			SaveManager.AutoloadLabel:SetText('当前自动加载的配置文件:' .. name)
 		end
 
 		SaveManager:SetIgnoreIndexes({ 'SaveManager_ConfigList', 'SaveManager_ConfigName' })

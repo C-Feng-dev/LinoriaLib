@@ -76,11 +76,11 @@ local ThemeManager = {} do
 	end
 
 	function ThemeManager:CreateThemeManager(groupbox)
-		groupbox:AddLabel('Background color'):AddColorPicker('BackgroundColor', { Default = self.Library.BackgroundColor });
-		groupbox:AddLabel('Main color')	:AddColorPicker('MainColor', { Default = self.Library.MainColor });
-		groupbox:AddLabel('Accent color'):AddColorPicker('AccentColor', { Default = self.Library.AccentColor });
-		groupbox:AddLabel('Outline color'):AddColorPicker('OutlineColor', { Default = self.Library.OutlineColor });
-		groupbox:AddLabel('Font color')	:AddColorPicker('FontColor', { Default = self.Library.FontColor });
+		groupbox:AddLabel('背板颜色'):AddColorPicker('BackgroundColor', { Default = self.Library.BackgroundColor });
+		groupbox:AddLabel('主颜色')	:AddColorPicker('MainColor', { Default = self.Library.MainColor });
+		groupbox:AddLabel('副颜色'):AddColorPicker('AccentColor', { Default = self.Library.AccentColor });
+		groupbox:AddLabel('框架颜色'):AddColorPicker('OutlineColor', { Default = self.Library.OutlineColor });
+		groupbox:AddLabel('字体颜色')	:AddColorPicker('FontColor', { Default = self.Library.FontColor });
 
 		local ThemesArray = {}
 		for Name, Theme in next, self.BuiltInThemes do
@@ -90,11 +90,11 @@ local ThemeManager = {} do
 		table.sort(ThemesArray, function(a, b) return self.BuiltInThemes[a][1] < self.BuiltInThemes[b][1] end)
 
 		groupbox:AddDivider()
-		groupbox:AddDropdown('ThemeManager_ThemeList', { Text = 'Theme list', Values = ThemesArray, Default = 1 })
+		groupbox:AddDropdown('ThemeManager_ThemeList', { Text = '主题列表', Values = ThemesArray, Default = 1 })
 
-		groupbox:AddButton('Set as default', function()
+		groupbox:AddButton('设置为默认主题', function()
 			self:SaveDefault(Options.ThemeManager_ThemeList.Value)
-			self.Library:Notify(string.format('Set default theme to %q', Options.ThemeManager_ThemeList.Value))
+			self.Library:Notify(string.format('已将%q主题设置为默认主题', Options.ThemeManager_ThemeList.Value))
 		end)
 
 		Options.ThemeManager_ThemeList:OnChanged(function()
@@ -102,8 +102,8 @@ local ThemeManager = {} do
 		end)
 
 		groupbox:AddDivider()
-		groupbox:AddInput('ThemeManager_CustomThemeName', { Text = 'Custom theme name' })
-		groupbox:AddDropdown('ThemeManager_CustomThemeList', { Text = 'Custom themes', Values = self:ReloadCustomThemes(), AllowNull = true, Default = 1 })
+		groupbox:AddInput('ThemeManager_CustomThemeName', { Text = '自定义主题名' })
+		groupbox:AddDropdown('ThemeManager_CustomThemeList', { Text = '自定义主题', Values = self:ReloadCustomThemes(), AllowNull = true, Default = 1 })
 		groupbox:AddDivider()
 		
 		groupbox:AddButton('Save theme', function() 
