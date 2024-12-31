@@ -11,18 +11,15 @@ local Mouse = LocalPlayer:GetMouse();
 
 local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 
-local ScreenGui = Instance.new('ScreenGui');
-ProtectGui(ScreenGui);
+local Main_ScreenGui = Instance.new('ScreenGui');
+ProtectGui(Main_ScreenGui);
 
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
-ScreenGui.Parent = CoreGui;
-ScreenGui.Name = "LinoriaLib-UI";
+Main_ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
+Main_ScreenGui.Parent = gethui();
+Main_ScreenGui.Name = "LinoriaLib-UI";
 
 local Toggles = {};
 local Options = {};
-
-getgenv().Toggles = Toggles;
-getgenv().Options = Options;
 
 local Library = {
     Registry = {};
@@ -44,7 +41,7 @@ local Library = {
     DependencyBoxes = {};
 
     Signals = {};
-    ScreenGui = ScreenGui;
+    ScreenGui = Main_ScreenGui;
 };
 
 local RainbowStep = 0
@@ -146,6 +143,7 @@ end;
 
 function Library:CreateLabel(Properties, IsHud)
     local _Instance = Library:Create('TextLabel', {
+        Name = "UI_Label",
         BackgroundTransparency = 1;
         Font = Library.Font;
         TextColor3 = Library.FontColor;
@@ -193,6 +191,7 @@ end;
 function Library:AddToolTip(InfoStr, HoverInstance)
     local X, Y = Library:GetTextBounds(InfoStr, Library.Font, 14);
     local Tooltip = Library:Create('Frame', {
+        Name = "Tooltip",
         BackgroundColor3 = Library.MainColor,
         BorderColor3 = Library.OutlineColor,
 
@@ -392,14 +391,14 @@ function Library:Unload()
         Library.OnUnload()
     end
 
-    ScreenGui:Destroy()
+    Main_ScreenGui:Destroy()
 end
 
 function Library:OnUnload(Callback)
     Library.OnUnload = Callback
 end
 
-Library:GiveSignal(ScreenGui.DescendantRemoving:Connect(function(Instance)
+Library:GiveSignal(Main_ScreenGui.DescendantRemoving:Connect(function(Instance)
     if Library.RegistryMap[Instance] then
         Library:RemoveFromRegistry(Instance);
     end;
@@ -466,7 +465,7 @@ do
             Size = UDim2.fromOffset(230, Info.Transparency and 271 or 253);
             Visible = false;
             ZIndex = 15;
-            Parent = ScreenGui,
+            Parent = Main_ScreenGui,
         });
 
         DisplayFrame:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
@@ -675,7 +674,7 @@ do
                 ZIndex = 14,
 
                 Visible = false,
-                Parent = ScreenGui
+                Parent = Main_ScreenGui
             })
 
             ContextMenu.Inner = Library:Create('Frame', {
@@ -1061,7 +1060,7 @@ do
             Size = UDim2.new(0, 60, 0, 45 + 2);
             Visible = false;
             ZIndex = 14;
-            Parent = ScreenGui;
+            Parent = Main_ScreenGui;
         });
 
         ToggleLabel:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
@@ -2271,7 +2270,7 @@ do
             BorderColor3 = Color3.new(0, 0, 0);
             ZIndex = 20;
             Visible = false;
-            Parent = ScreenGui;
+            Parent = Main_ScreenGui;
         });
 
         local function RecalculateListPosition()
@@ -2686,7 +2685,7 @@ do
         Position = UDim2.new(0, 0, 0, 40);
         Size = UDim2.new(0, 300, 0, 200);
         ZIndex = 100;
-        Parent = ScreenGui;
+        Parent = Main_ScreenGui;
         Name = "NotificationArea";
     });
 
@@ -2698,12 +2697,13 @@ do
     });
 
     local WatermarkOuter = Library:Create('Frame', {
+        Name = "Watermark",
         BorderColor3 = Color3.new(0, 0, 0);
         Position = UDim2.new(0, 100, 0, -25);
         Size = UDim2.new(0, 213, 0, 20);
         ZIndex = 200;
         Visible = false;
-        Parent = ScreenGui;
+        Parent = Main_ScreenGui;
     });
 
     local WatermarkInner = Library:Create('Frame', {
@@ -2762,13 +2762,14 @@ do
 
 
     local KeybindOuter = Library:Create('Frame', {
+        Name = "Keybind",
         AnchorPoint = Vector2.new(0, 0.5);
         BorderColor3 = Color3.new(0, 0, 0);
         Position = UDim2.new(0, 10, 0.5, 0);
         Size = UDim2.new(0, 210, 0, 20);
         Visible = false;
         ZIndex = 100;
-        Parent = ScreenGui;
+        Parent = Main_ScreenGui;
     });
 
     local KeybindInner = Library:Create('Frame', {
@@ -2953,7 +2954,7 @@ function Library:CreateWindow(...)
         Config.AutoShow = Arguments[2] or false;
     end
 
-    if type(Config.Title) ~= 'string' then Config.Title = 'No title' end
+    if type(Config.Title) ~= 'string' then Config.Title = '标题' end
     if type(Config.TabPadding) ~= 'number' then Config.TabPadding = 0 end
     if type(Config.MenuFadeTime) ~= 'number' then Config.MenuFadeTime = 0.2 end
 
@@ -2970,6 +2971,7 @@ function Library:CreateWindow(...)
     };
 
     local Outer = Library:Create('Frame', {
+        Name = "MainWindow",
         AnchorPoint = Config.AnchorPoint,
         BackgroundColor3 = Color3.new(0, 0, 0);
         BorderSizePixel = 0;
@@ -2977,7 +2979,7 @@ function Library:CreateWindow(...)
         Size = Config.Size,
         Visible = false;
         ZIndex = 1;
-        Parent = ScreenGui;
+        Parent = Main_ScreenGui;
     });
 
     Library:MakeDraggable(Outer, 25);
@@ -3510,7 +3512,7 @@ function Library:CreateWindow(...)
         Visible = true;
         Text = '';
         Modal = false;
-        Parent = ScreenGui;
+        Parent = Main_ScreenGui;
     });
 
     local TransparencyCache = {};
@@ -3546,7 +3548,7 @@ function Library:CreateWindow(...)
                 CursorOutline.Color = Color3.new(0, 0, 0);
                 CursorOutline.Visible = true;
 
-                while Toggled and ScreenGui.Parent do
+                while Toggled and Main_ScreenGui.Parent do
                     InputService.MouseIconEnabled = false;
 
                     local mPos = InputService:GetMouseLocation();
@@ -3642,5 +3644,5 @@ end;
 Players.PlayerAdded:Connect(OnPlayerChange);
 Players.PlayerRemoving:Connect(OnPlayerChange);
 
-getgenv().Library = Library
+getgenv().LinoriaLib_Library = Library
 return Library
